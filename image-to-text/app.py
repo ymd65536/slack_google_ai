@@ -4,7 +4,6 @@ import os
 from slack_mod import share_file
 from img_vertexai import img_text
 from gcs_client import upload
-import gemini_img
 
 from slack_bolt import App, Ack
 from slack_bolt.adapter.socket_mode import SocketModeHandler
@@ -21,6 +20,15 @@ app = App(
 )
 
 
+def _count_files(files):
+    return len(files)
+
+
+def count_files_msg(files):
+    file_count = _count_files(files)
+    return f"画像を{file_count}枚受信しました"
+
+
 def handle_mention(event, say):
     files = event.get('files', [])
 
@@ -28,7 +36,7 @@ def handle_mention(event, say):
         thread_id = event['ts']
         say('画像が添付されていません！', thread_ts=thread_id)
     else:
-        early_response = gemini_img.count_files_msg(files=files)
+        early_response = count_files_msg(files=files)
         say(early_response, thread_ts=thread_id)
 
         thread_id = event['ts']
