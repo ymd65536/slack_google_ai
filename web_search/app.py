@@ -17,12 +17,13 @@ def handle_mention(event, say):
     thread_id = event['ts']
     if "thread_ts" in event:
         thread_id = event['thread_ts']
-    
+
     say('処理中', thread_ts=thread_id)
 
     answer = web_src.run_query(query, filter_words=[])
     say(str(answer['result']), thread_ts=thread_id)
     say('おわり', thread_ts=thread_id)
+
 
 def slack_ack(ack: Ack):
     ack()
