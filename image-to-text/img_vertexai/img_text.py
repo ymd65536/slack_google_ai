@@ -6,7 +6,7 @@ from vertexai.preview.language_models import TextGenerationModel
 project_id = os.environ.get("PROJECT_ID", "")
 
 
-def _generate(prompt: str, image: Part, file_name: str):
+def _generate(prompt: str, image: Part, original_file_name: str):
     vertexai.init(project=project_id, location="asia-northeast1")
     responses = GenerativeModel("gemini-1.0-pro-vision-001").generate_content(
         [image, """画像に含まれているテキストを抜き出してください。"""],
@@ -39,17 +39,17 @@ def _generate(prompt: str, image: Part, file_name: str):
             temperature=0.2, max_output_tokens=1024,
             top_k=40, top_p=0.8).text
 
-        res = f"Answer: {answer}\nFileName:{file_name}"
+        res = f"Answer: {answer}\nFileName:{original_file_name}"
 
     else:
-        res = "No response:{file_name}"
+        res = f"No response:{original_file_name}"
 
     return res
 
 
-def img_to_text(prompt, gcs_file_name, upload_file_name):
+def img_to_text(prompt, gcs_uri, original_file_name):
     return _generate(
         prompt,
-        Part.from_uri(gcs_file_name, mime_type="image/png"),
-        upload_file_name
+        Part.from_uri(gcs_uri, mime_type="image/png"),
+        original_file_name
     )
